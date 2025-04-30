@@ -45,8 +45,12 @@ def get_quantity(symbol, position_pct):
     query = f"timestamp={timestamp}"
     signature = hmac.new(API_SECRET.encode(), query.encode(), hashlib.sha256).hexdigest()
     res = requests.get(f"{BASE_URL}/fapi/v2/balance", params={"timestamp": timestamp, "signature": signature}, headers=headers)
-    balance_data = res.json()
-    usdt_balance = next((float(x['balance']) for x in balance_data if x['asset'] == 'USDT'), 0)
+    balance_data = response.json()
+
+usdt_balance = next(
+    (float(x['balance']) for x in balance_data if x.get('asset') == 'USDT'), 0
+)
+
     
     # Get price for symbol
     price_res = requests.get(f"{BASE_URL}/fapi/v1/ticker/price", params={"symbol": symbol})
